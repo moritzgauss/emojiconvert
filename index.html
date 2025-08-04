@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Android Emoji Renderer</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 2rem;
+      max-width: 600px;
+      margin: auto;
+    }
+    #input {
+      width: 100%;
+      font-size: 1.5rem;
+      padding: 1rem;
+    }
+    #output {
+      margin-top: 1.5rem;
+      font-size: 2rem;
+      line-height: 1.6;
+    }
+    img.emoji {
+      width: 1.4em;
+      height: 1.4em;
+      vertical-align: middle;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Android Emoji Renderer</h1>
+  <p>Type emojis below and see them rendered as Android-style images:</p>
+  <input id="input" placeholder="Type some emojis here 😊🔥🚀" />
+
+  <div id="output"></div>
+
+  <script>
+    const input = document.getElementById('input');
+    const output = document.getElementById('output');
+
+    input.addEventListener('input', () => {
+      const text = input.value;
+      output.innerHTML = '';
+
+      // Match all emoji codepoints
+      const emojiRegex = /(\p{Emoji_Presentation}|\p{Emoji}\uFE0F)/gu;
+      const parts = text.split(emojiRegex);
+
+      for (let part of parts) {
+        if (emojiRegex.test(part)) {
+          const codepoints = Array.from(part).map(c => c.codePointAt(0).toString(16));
+          const filename = 'emoji_u' + codepoints.join('_') + '.png';
+          const url = `https://raw.githubusercontent.com/googlefonts/noto-emoji/main/png/128/${filename}`;
+          const img = document.createElement('img');
+          img.src = url;
+          img.className = 'emoji';
+          img.alt = part;
+          output.appendChild(img);
+        } else {
+          output.appendChild(document.createTextNode(part));
+        }
+      }
+    });
+  </script>
+
+</body>
+</html>
